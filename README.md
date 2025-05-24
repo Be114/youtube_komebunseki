@@ -175,6 +175,28 @@ npm test
 - コメント取得は最大100件に制限されています（MVP版）
 - 日本語コメントの分析に特化しています
 - APIキーは環境変数で管理し、公開リポジトリにコミットしないでください
+- 本番環境では`ALLOWED_ORIGINS`と`DEBUG`の設定を適切に変更してください
+
+## デプロイメント準備
+
+### 本番環境向けの設定
+
+1. **環境変数の設定**
+   ```bash
+   # .envファイル（本番用）
+   YOUTUBE_API_KEY=your_production_api_key
+   ALLOWED_ORIGINS=https://yourdomain.com
+   REACT_APP_API_URL=https://api.yourdomain.com
+   DEBUG=False
+   ```
+
+2. **HTTPS対応**
+   - フロントエンド・バックエンドともにHTTPS化を推奨
+   - Let's Encryptなどで証明書を取得
+
+3. **APIキーの制限**
+   - Google Cloud ConsoleでAPIキーにHTTPリファラー制限を設定
+   - 本番ドメインのみ許可するよう設定
 
 ## トラブルシューティング
 
