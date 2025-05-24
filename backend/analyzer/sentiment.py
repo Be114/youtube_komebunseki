@@ -96,7 +96,8 @@ class SentimentAnalyzer:
             '失望', 'がっかり', '不満', '問題', '困る'
         ]
         
-        text_lower = text.lower()
+        # 日本語は大文字小文字の区別がないため、元のテキストを使用
+        text_lower = text
         
         positive_count = sum(1 for word in positive_words if word in text_lower)
         negative_count = sum(1 for word in negative_words if word in text_lower)
