@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, HttpUrl
 from typing import List, Dict
@@ -83,10 +83,13 @@ async def root():
     return {"message": "YouTube Comment Analyzer API"}
 
 @app.post("/api/analyze", response_model=AnalyzeResponse)
-async def analyze_comments(request: AnalyzeRequest):
+async def analyze_comments(request: AnalyzeRequest, response: Response):
     """
     YouTube動画のコメントを分析して感情分析と頻出キーワードを返す
     """
+    # キャッシュを1時間に設定（同じ動画の再分析を減らす）
+    response.headers["Cache-Control"] = "public, max-age=3600"
+    
     try:
         # YouTube URLから動画IDを抽出
         video_id = extract_video_id(str(request.video_url))
