@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { useRef } from 'react';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, TooltipItem } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import { SentimentData } from '../types';
 import './SentimentChart.css';
@@ -56,8 +56,8 @@ const SentimentChart: React.FC<SentimentChartProps> = ({ sentiment }) => {
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
-            const count = context.raw;
+          label: function(context: TooltipItem<'pie'>) {
+            const count = context.raw as number;
             const percentage = ((count / total) * 100).toFixed(1);
             return `${context.label}: ${count}件 (${percentage}%)`;
           },

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './App.css';
 import InputForm from './components/InputForm';
 import SentimentChart from './components/SentimentChart';

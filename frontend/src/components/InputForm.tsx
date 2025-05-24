@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { analyzeVideo } from '../api/client';
 import { AnalysisResult } from '../types';
 import './InputForm.css';
