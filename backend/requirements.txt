@@ -5,3 +5,4 @@ httpx==0.25.2
 python-multipart==0.0.6
 janome==0.5.0
 oseti==0.2.4
+python-dotenv==1.0.0

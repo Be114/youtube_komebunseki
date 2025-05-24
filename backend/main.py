@@ -5,6 +5,10 @@ from typing import List, Dict
 import re
 import logging
 import os
+from dotenv import load_dotenv
+
+# .envファイルを読み込み
+load_dotenv()
 
 from api.youtube import YouTubeClient
 from analyzer.sentiment import SentimentAnalyzer
