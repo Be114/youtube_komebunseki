@@ -157,6 +157,35 @@ npm run type-check
 npm run lint
 ```
 
+### 開発前のチェック
+
+開発を始める前に、以下のコマンドで型チェックとリントを実行することを推奨します：
+
+```bash
+# フロントエンドの型チェックとリント
+cd frontend
+npm run check-all
+
+# 型チェックのみ
+npm run type-check
+
+# リントのみ
+npm run lint
+
+# リントの自動修正
+npm run lint:fix
+```
+
+### よくある開発エラーと対処法
+
+**「'React' is declared but its value is never read」エラー**
+- React 17以降では、JSX使用時にReactのインポートは不要です
+- このプロジェクトはReact 18を使用しているため、Reactの明示的なインポートは削除されています
+
+**未使用のインポートエラー**
+- TypeScriptのnoUnusedLocalsとnoUnusedParameters設定により検出されます
+- `npm run lint:fix`で自動的に削除できます
+
 ### テスト
 
 ```bash
