@@ -33,7 +33,7 @@ class YouTubeClient:
             return self._get_dummy_comments()
         
         try:
-            async with httpx.AsyncClient() as client:
+            async with httpx.AsyncClient(timeout=30.0) as client:
                 # 動画が存在するかチェック
                 await self._check_video_exists(client, video_id)
                 

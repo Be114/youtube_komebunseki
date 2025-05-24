@@ -4,6 +4,7 @@ from pydantic import BaseModel, HttpUrl
 from typing import List, Dict
 import re
 import logging
+import os
 
 from api.youtube import YouTubeClient
 from analyzer.sentiment import SentimentAnalyzer
@@ -20,9 +21,10 @@ app = FastAPI(
 )
 
 # CORS設定
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # フロントエンドのURL
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -59,12 +61,17 @@ def extract_video_id(url: str) -> str:
         r'(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]+)'
     ]
     
-    for pattern in patterns:
-        match = re.search(pattern, str(url))
-        if match:
-            return match.group(1)
+    url_str = str(url).strip()
     
-    raise ValueError("無効なYouTube URLです")
+    for pattern in patterns:
+        match = re.search(pattern, url_str)
+        if match:
+            video_id = match.group(1)
+            # 動画IDの長さチェック（YouTubeの動画IDは通常11文字）
+            if len(video_id) >= 10 and len(video_id) <= 12:
+                return video_id
+    
+    raise ValueError("無効なYouTube URLです。正しい形式: https://www.youtube.com/watch?v=VIDEO_ID")
 
 @app.get("/")
 async def root():
@@ -121,4 +128,16 @@ async def analyze_comments(request: AnalyzeRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    
+    # 環境変数からポート番号を取得
+    port = int(os.getenv("BACKEND_PORT", "8000"))
+    
+    # デバッグモードの設定
+    debug_mode = os.getenv("DEBUG", "False").lower() == "true"
+    
+    uvicorn.run(
+        app, 
+        host="0.0.0.0", 
+        port=port,
+        reload=debug_mode
+    )
