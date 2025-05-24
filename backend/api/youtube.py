@@ -26,11 +26,13 @@ class YouTubeClient:
             
         Returns:
             コメントテキストのリスト
+            
+        Raises:
+            HTTPException: APIキーが設定されていない場合や、API呼び出しに失敗した場合
         """
         if not self.api_key:
-            # APIキーが設定されていない場合のダミーデータ
-            logger.warning("APIキーが未設定のため、ダミーデータを返します")
-            return self._get_dummy_comments()
+            logger.error("YOUTUBE_API_KEYが設定されていません")
+            raise HTTPException(status_code=500, detail="YouTube APIキーが設定されていません。管理者に連絡してください。")
         
         try:
             async with httpx.AsyncClient(timeout=30.0) as client:
