@@ -26,13 +26,14 @@ app = FastAPI(
 
 # CORS設定
 allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+is_debug = os.getenv("DEBUG", "False").lower() == "true"
+cors_config = {
+    "allow_origins": allowed_origins,
+    "allow_credentials": True,
+    "allow_methods": ["GET", "POST", "OPTIONS"] if not is_debug else ["*"],
+    "allow_headers": ["Content-Type", "Authorization"] if not is_debug else ["*"],
+}
+app.add_middleware(CORSMiddleware, **cors_config)
 
 # リクエスト・レスポンスモデル
 class AnalyzeRequest(BaseModel):
@@ -88,11 +89,12 @@ async def analyze_comments(request: AnalyzeRequest, response: Response):
     YouTube動画のコメントを分析して感情分析と頻出キーワードを返す
     """
     # キャッシュを1時間に設定（同じ動画の再分析を減らす）
-    response.headers["Cache-Control"] = "public, max-age=3600"
+    response.headers["Cache-Control"] = "public, max-age=3600, stale-while-revalidate=600"
     
     try:
         # YouTube URLから動画IDを抽出
         video_id = extract_video_id(str(request.video_url))
+        response.headers["ETag"] = f"W/\"{video_id}\""
         logger.info(f"動画ID抽出完了: {video_id}")
         
         # YouTube APIからコメント取得
@@ -131,7 +133,8 @@ async def analyze_comments(request: AnalyzeRequest, response: Response):
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"分析エラー: {e}")
-        raise HTTPException(status_code=500, detail="分析処理中にエラーが発生しました")
+        error_detail = f"分析処理中にエラーが発生しました: {str(e)}"
+        raise HTTPException(status_code=500, detail=error_detail)
 
 if __name__ == "__main__":
     import uvicorn

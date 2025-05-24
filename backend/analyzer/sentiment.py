@@ -15,6 +15,7 @@ class SentimentAnalyzer:
         """感情分析器の初期化"""
         if oseti is None:
             logger.warning("osetiライブラリが見つかりません。簡易な感情分析を使用します。")
+            logger.warning("より正確な分析のために: pip install oseti を実行してください")
             self.analyzer = None
         else:
             try:
@@ -22,6 +23,8 @@ class SentimentAnalyzer:
                 logger.info("oseti感情分析器を初期化しました")
             except Exception as e:
                 logger.error(f"oseti初期化エラー: {e}")
+                logger.warning("osetiの初期化に失敗しました。簡易な感情分析を使用します。")
+                logger.warning("解決方法: pip install ipadic-neologd を実行してください")
                 self.analyzer = None
     
     def analyze_text(self, text: str) -> str:

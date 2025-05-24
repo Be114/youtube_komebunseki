@@ -1,5 +1,11 @@
 import { AnalysisResult } from '../types';
 
+declare const process: {
+  env: {
+    REACT_APP_API_URL?: string;
+  }
+};
+
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 const MAX_RETRY_ATTEMPTS = 3;
 const RETRY_DELAY = 1000; // 1秒
@@ -82,7 +88,7 @@ export const analyzeVideo = async (videoUrl: string): Promise<AnalysisResult> =>
       
       if (error instanceof ApiError) {
         // APIエラーの場合、特定のステータスコードでは再試行しない
-        if (error.status && [400, 403, 404, 429].includes(error.status)) {
+        if (error.status && [400, 403, 404, 429].indexOf(error.status) !== -1) {
           throw error;
         }
       }
