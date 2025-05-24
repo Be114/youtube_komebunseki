@@ -70,6 +70,9 @@ const InputForm: React.FC<InputFormProps> = ({ onResult, onError, onLoadingChang
             placeholder="https://www.youtube.com/watch?v=..."
             disabled={isSubmitting}
             className="url-input"
+            aria-label="YouTube動画URL入力欄"
+            aria-describedby="url-help"
+            required
           />
         </div>
         
@@ -82,7 +85,7 @@ const InputForm: React.FC<InputFormProps> = ({ onResult, onError, onLoadingChang
         </button>
       </form>
       
-      <div className="form-info">
+      <div className="form-info" id="url-help">
         <p>
           <strong>使用方法:</strong>
         </p>

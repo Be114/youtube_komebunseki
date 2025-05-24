@@ -1,10 +1,14 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, HttpUrl
 from typing import List, Dict
 import re
 import logging
 import os
+from dotenv import load_dotenv
+
+# .envファイルを読み込み
+load_dotenv()
 
 from api.youtube import YouTubeClient
 from analyzer.sentiment import SentimentAnalyzer
@@ -56,9 +60,9 @@ keyword_extractor = KeywordExtractor()
 def extract_video_id(url: str) -> str:
     """YouTube URLから動画IDを抽出"""
     patterns = [
-        r'(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)',
-        r'(?:https?:\/\/)?(?:www\.)?youtu\.be\/([a-zA-Z0-9_-]+)',
-        r'(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]+)'
+        r'(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)(?:&.*)?',
+        r'(?:https?:\/\/)?(?:www\.)?youtu\.be\/([a-zA-Z0-9_-]+)(?:\?.*)?',
+        r'(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]+)(?:\?.*)?'
     ]
     
     url_str = str(url).strip()
@@ -79,10 +83,13 @@ async def root():
     return {"message": "YouTube Comment Analyzer API"}
 
 @app.post("/api/analyze", response_model=AnalyzeResponse)
-async def analyze_comments(request: AnalyzeRequest):
+async def analyze_comments(request: AnalyzeRequest, response: Response):
     """
     YouTube動画のコメントを分析して感情分析と頻出キーワードを返す
     """
+    # キャッシュを1時間に設定（同じ動画の再分析を減らす）
+    response.headers["Cache-Control"] = "public, max-age=3600"
+    
     try:
         # YouTube URLから動画IDを抽出
         video_id = extract_video_id(str(request.video_url))
