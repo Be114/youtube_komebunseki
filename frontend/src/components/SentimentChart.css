@@ -1,0 +1,105 @@
+.sentiment-chart-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 300px;
+  margin-bottom: 1.5rem;
+}
+
+.sentiment-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 6px;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.stat-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+.stat-item.positive .stat-color {
+  background-color: #28a745;
+}
+
+.stat-item.neutral .stat-color {
+  background-color: #ffc107;
+}
+
+.stat-item.negative .stat-color {
+  background-color: #dc3545;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.stat-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #555;
+}
+
+.stat-percentage {
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 0.25rem;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+  .chart-wrapper {
+    height: 250px;
+    margin-bottom: 1rem;
+  }
+  
+  .sentiment-stats {
+    gap: 0.5rem;
+  }
+  
+  .stat-item {
+    padding: 0.75rem;
+  }
+  
+  .stat-color {
+    width: 14px;
+    height: 14px;
+    margin-right: 0.5rem;
+  }
+  
+  .stat-label {
+    font-size: 0.85rem;
+  }
+  
+  .stat-value {
+    font-size: 1rem;
+  }
+  
+  .stat-percentage {
+    font-size: 0.8rem;
+  }
+}
